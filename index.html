@@ -126,6 +126,13 @@
 
   <!-- Output -->
   <div id="output"></div>
+  <!-- History Section -->
+<div class="section" id="historySection">
+  <h2>📅 History</h2>
+  <button onclick="loadHistory()">View Saved Logs</button>
+  <div id="historyLogs"></div>
+</div>
+
 
   <script>
     function saveData() {
@@ -153,6 +160,32 @@
       // Save to localStorage
       localStorage.setItem('lifestyleLog-' + log.date, JSON.stringify(log));
     }
+    function loadHistory() {
+  const logsContainer = document.getElementById("historyLogs");
+  logsContainer.innerHTML = ""; // Clear old data
+
+  const keys = Object.keys(localStorage).filter(key => key.startsWith("lifestyleLog-")).sort().reverse();
+
+  if (keys.length === 0) {
+    logsContainer.innerHTML = "<p>No saved logs found.</p>";
+    return;
+  }
+
+  keys.forEach(key => {
+    const log = JSON.parse(localStorage.getItem(key));
+    const logHTML = `
+      <div style="background-color: #1a1a1a; border: 1px solid #333; padding: 20px; margin-bottom: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);">
+        <h3>📆 ${log.date}</h3>
+        <p><strong>🛌 Sleep:</strong> ${log.sleep.bedtime} → ${log.sleep.waketime}</p>
+        <p><strong>🍽️ Food:</strong> ${log.food.input} (${log.food.type})</p>
+        ${log.food.note ? `<p><em>📝 Note:</em> ${log.food.note}</p>` : ""}
+        <p><strong>🏃 Activity:</strong> ${log.activity.type}</p>
+        ${log.activity.note ? `<p><em>📝 Note:</em> ${log.activity.note}</p>` : ""}
+      </div>
+    `;
+    logsContainer.innerHTML += logHTML;
+  });
+}
   </script>
 
 </body>
